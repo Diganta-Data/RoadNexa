@@ -1,0 +1,71 @@
+.home-container {
+  max-width: 900px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.hero {
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.description {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+  max-width: 700px;
+  margin-inline: auto;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.btn-secondary {
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.status-section {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.status-card {
+  padding: 1.5rem 2rem;
+  min-width: 250px;
+}
+
+.status-badge {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.healthy, .status-badge.connected {
+  color: var(--accent-success);
+}
+
+.status-badge.error, .status-badge.disconnected, .status-badge.degraded {
+  color: var(--accent-danger);
+}
+
+.status-badge.checking {
+  color: var(--accent-warning);
+}

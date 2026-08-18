@@ -1,0 +1,17 @@
+# =============================================================================
+# IRIS — City Configuration
+# =============================================================================
+# This file defines the initial city registry. Cities can also be added
+# dynamically via the POST /cities API endpoint.
+# =============================================================================
+
+cities:
+  - city_name: Kolkata
+    state: West Bengal
+    country: India
+    latitude: 22.5726
+    longitude: 88.3639
+    active: true
+    description: >-
+      First case study city. Capital of West Bengal, one of India's
+      largest metropolitan areas with significant road safety challenges.

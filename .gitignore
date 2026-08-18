@@ -1,0 +1,80 @@
+# =============================================================================
+# IRIS — Indian Road Intelligence & Safety Platform
+# =============================================================================
+
+# --- Environment ---
+.env
+.env.local
+.env.production
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+.venv/
+venv/
+env/
+ENV/
+
+# --- Node / Frontend ---
+node_modules/
+frontend/node_modules/
+frontend/dist/
+*.local
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- Data (keep structure, ignore large files) ---
+data/raw/*
+data/staging/*
+data/processed/*
+data/rejected/*
+data/uploads/*
+!data/raw/.gitkeep
+!data/staging/.gitkeep
+!data/processed/.gitkeep
+!data/rejected/.gitkeep
+!data/uploads/.gitkeep
+data/sample/*.csv
+data/sample/*.xlsx
+data/sample/*.geojson
+!data/sample/.gitkeep
+
+# --- ML Models ---
+models/trained/*.pkl
+models/trained/*.joblib
+models/trained/*.json
+!models/trained/.gitkeep
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Test / Coverage ---
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Logs ---
+*.log
+logs/

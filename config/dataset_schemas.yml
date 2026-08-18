@@ -1,0 +1,274 @@
+# =============================================================================
+# IRIS — Dataset Schema Definitions
+# =============================================================================
+# Defines the expected columns for each dataset type. Used by the
+# validation engine and column mapping interface.
+#
+# Each field has:
+#   - name:        internal standard column name
+#   - type:        expected data type (string, integer, float, date, datetime, geometry)
+#   - required:    whether the field is mandatory
+#   - description: human-readable description for the UI
+# =============================================================================
+
+dataset_schemas:
+
+  accidents:
+    display_name: "Accident Records"
+    description: "Road accident/crash incident records"
+    fields:
+      - name: accident_date
+        type: date
+        required: true
+        description: "Date of the accident (YYYY-MM-DD)"
+      - name: accident_time
+        type: string
+        required: false
+        description: "Time of the accident (HH:MM)"
+      - name: latitude
+        type: float
+        required: true
+        description: "Latitude of accident location"
+      - name: longitude
+        type: float
+        required: true
+        description: "Longitude of accident location"
+      - name: severity
+        type: string
+        required: true
+        description: "Accident severity (fatal, grievous, minor, non_injury)"
+      - name: accident_type
+        type: string
+        required: false
+        description: "Type of accident (collision, hit_and_run, overturning, etc.)"
+      - name: vehicles_involved
+        type: integer
+        required: false
+        description: "Number of vehicles involved"
+      - name: persons_killed
+        type: integer
+        required: false
+        description: "Number of fatalities"
+      - name: persons_injured
+        type: integer
+        required: false
+        description: "Number of injuries"
+      - name: weather_condition
+        type: string
+        required: false
+        description: "Weather at time of accident"
+      - name: road_condition
+        type: string
+        required: false
+        description: "Road surface condition"
+      - name: light_condition
+        type: string
+        required: false
+        description: "Lighting condition (day, night, dusk, dawn)"
+      - name: road_type
+        type: string
+        required: false
+        description: "Type of road (highway, arterial, local, etc.)"
+      - name: description
+        type: string
+        required: false
+        description: "Free-text description"
+
+  roads:
+    display_name: "Road Network"
+    description: "Road segments with geometry"
+    fields:
+      - name: road_name
+        type: string
+        required: true
+        description: "Name of the road"
+      - name: road_type
+        type: string
+        required: true
+        description: "Road classification (primary, secondary, tertiary, residential)"
+      - name: geometry
+        type: geometry
+        required: true
+        description: "Road geometry (LineString WKT or GeoJSON)"
+      - name: lanes
+        type: integer
+        required: false
+        description: "Number of lanes"
+      - name: speed_limit
+        type: integer
+        required: false
+        description: "Posted speed limit in km/h"
+      - name: surface
+        type: string
+        required: false
+        description: "Road surface material"
+      - name: oneway
+        type: string
+        required: false
+        description: "One-way indicator (yes/no)"
+      - name: length_m
+        type: float
+        required: false
+        description: "Road segment length in meters"
+
+  traffic:
+    display_name: "Traffic Data"
+    description: "Traffic volume and speed observations"
+    fields:
+      - name: road_name
+        type: string
+        required: false
+        description: "Road name or reference"
+      - name: latitude
+        type: float
+        required: true
+        description: "Latitude of observation point"
+      - name: longitude
+        type: float
+        required: true
+        description: "Longitude of observation point"
+      - name: observation_date
+        type: date
+        required: true
+        description: "Date of observation"
+      - name: observation_time
+        type: string
+        required: false
+        description: "Time of observation"
+      - name: traffic_volume
+        type: integer
+        required: false
+        description: "Vehicle count"
+      - name: average_speed
+        type: float
+        required: false
+        description: "Average speed in km/h"
+      - name: congestion_level
+        type: string
+        required: false
+        description: "Congestion level (free_flow, moderate, heavy, gridlock)"
+
+  potholes:
+    display_name: "Pothole Reports"
+    description: "Road surface defects and potholes"
+    fields:
+      - name: latitude
+        type: float
+        required: true
+        description: "Latitude of pothole"
+      - name: longitude
+        type: float
+        required: true
+        description: "Longitude of pothole"
+      - name: severity
+        type: string
+        required: false
+        description: "Pothole severity (minor, moderate, severe)"
+      - name: report_date
+        type: date
+        required: false
+        description: "Date reported"
+      - name: status
+        type: string
+        required: false
+        description: "Repair status (reported, in_progress, repaired)"
+      - name: road_name
+        type: string
+        required: false
+        description: "Road name where pothole is located"
+
+  road_condition:
+    display_name: "Road Condition Assessments"
+    description: "Overall road surface condition surveys"
+    fields:
+      - name: road_name
+        type: string
+        required: true
+        description: "Road name"
+      - name: condition_rating
+        type: string
+        required: true
+        description: "Condition rating (good, fair, poor, very_poor)"
+      - name: survey_date
+        type: date
+        required: false
+        description: "Date of survey"
+      - name: latitude
+        type: float
+        required: false
+        description: "Start latitude"
+      - name: longitude
+        type: float
+        required: false
+        description: "Start longitude"
+
+  weather:
+    display_name: "Weather Data"
+    description: "Historical weather observations"
+    fields:
+      - name: observation_date
+        type: date
+        required: true
+        description: "Date of observation"
+      - name: temperature
+        type: float
+        required: false
+        description: "Temperature in Celsius"
+      - name: rainfall_mm
+        type: float
+        required: false
+        description: "Rainfall in millimeters"
+      - name: visibility_km
+        type: float
+        required: false
+        description: "Visibility in kilometers"
+      - name: condition
+        type: string
+        required: false
+        description: "Weather condition (clear, rain, fog, storm)"
+
+  infrastructure:
+    display_name: "Road Infrastructure"
+    description: "Street lights, signals, signs, barriers"
+    fields:
+      - name: latitude
+        type: float
+        required: true
+        description: "Latitude"
+      - name: longitude
+        type: float
+        required: true
+        description: "Longitude"
+      - name: infrastructure_type
+        type: string
+        required: true
+        description: "Type (street_light, traffic_signal, sign, barrier, median)"
+      - name: condition
+        type: string
+        required: false
+        description: "Condition (functional, damaged, missing)"
+      - name: road_name
+        type: string
+        required: false
+        description: "Associated road name"
+
+  pois:
+    display_name: "Points of Interest"
+    description: "Schools, hospitals, bus stops, and other relevant POIs"
+    fields:
+      - name: poi_name
+        type: string
+        required: true
+        description: "Name of the POI"
+      - name: poi_type
+        type: string
+        required: true
+        description: "Type (school, hospital, bus_stop, market, temple, station)"
+      - name: latitude
+        type: float
+        required: true
+        description: "Latitude"
+      - name: longitude
+        type: float
+        required: true
+        description: "Longitude"

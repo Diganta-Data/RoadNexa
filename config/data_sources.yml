@@ -1,0 +1,28 @@
+# =============================================================================
+# IRIS — Data Sources Registry Configuration
+# =============================================================================
+# Documents known data sources for each city. This is a reference file;
+# actual source tracking is done in the raw.data_source_registry table.
+# =============================================================================
+
+data_sources:
+
+  openstreetmap:
+    organization: "OpenStreetMap Contributors"
+    source_url: "https://www.openstreetmap.org"
+    license: "ODbL (Open Database License)"
+    description: "Road network geometry, POIs, and infrastructure data"
+    dataset_types:
+      - roads
+      - pois
+      - infrastructure
+
+  # Add city-specific sources as data becomes available
+  # Example:
+  # kolkata_police:
+  #   organization: "Kolkata Police"
+  #   source_url: "https://kolkatapolice.gov.in"
+  #   license: "Government Open Data"
+  #   description: "Official accident records"
+  #   dataset_types:
+  #     - accidents
