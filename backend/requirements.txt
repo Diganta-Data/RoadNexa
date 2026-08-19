@@ -21,11 +21,8 @@ numpy==2.2.1
 openpyxl==3.1.5
 
 # --- Geospatial ---
-geopandas==1.0.1
 shapely==2.0.6
 geoalchemy2==0.17.1
-pyogrio
-fiona
 
 # --- ML ---
 scikit-learn==1.6.1

@@ -4,10 +4,9 @@ import os
 from datetime import date
 from uuid import UUID
 
-import geopandas as gpd
 import pandas as pd
 from geoalchemy2.elements import WKTElement
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString, Point, shape
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from iris.models.core import Road
@@ -149,6 +148,53 @@ def _line_wkt(row, columns: dict[str, str]) -> WKTElement | None:
     return WKTElement(LineString([(lon - 0.002, lat - 0.002), (lon + 0.002, lat + 0.002)]).wkt, srid=4326)
 
 
+def _read_geojson(file_path: str) -> pd.DataFrame:
+    import json
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    rows = []
+    if isinstance(data, dict):
+        if data.get("type") == "FeatureCollection":
+            features = data.get("features", [])
+        elif data.get("type") == "Feature":
+            features = [data]
+        else:
+            features = []
+    else:
+        features = []
+
+    for feat in features:
+        row = {}
+        row.update(feat.get("properties", {}))
+        geom = feat.get("geometry")
+        if geom:
+            try:
+                row["geometry"] = shape(geom)
+            except Exception:
+                pass
+        rows.append(row)
+    
+    if not rows:
+        return pd.DataFrame()
+    return pd.DataFrame(rows)
+
+
+def _read_zip(file_path: str) -> pd.DataFrame:
+    import zipfile
+    import tempfile
+    with zipfile.ZipFile(file_path, 'r') as zip_ref:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            zip_ref.extractall(temp_dir)
+            for root, dirs, files in os.walk(temp_dir):
+                for file in files:
+                    full_path = os.path.join(root, file)
+                    ext = os.path.splitext(file)[1].lower()
+                    if ext in {".csv", ".tsv", ".xlsx", ".xls", ".json", ".geojson"}:
+                        return _read_upload_file(full_path)
+    raise ValueError("No supported files (CSV, GeoJSON, Excel) found in the zip archive.")
+
+
 def _read_upload_file(file_path: str) -> pd.DataFrame:
     ext = os.path.splitext(file_path)[1].lower()
     if ext == ".csv":
@@ -157,17 +203,15 @@ def _read_upload_file(file_path: str) -> pd.DataFrame:
         return pd.read_csv(file_path, sep="\t")
     if ext in {".xlsx", ".xls"}:
         return pd.read_excel(file_path)
-    if ext == ".json":
+    if ext in {".json", ".geojson"}:
         try:
-            return gpd.read_file(file_path)
+            return _read_geojson(file_path)
         except Exception:
             return pd.read_json(file_path)
-    if ext in {".geojson", ".gpkg", ".kml", ".shp"}:
-        return gpd.read_file(file_path)
     if ext == ".zip":
-        return gpd.read_file(f"zip://{file_path}")
+        return _read_zip(file_path)
     raise ValueError(
-        f"Unsupported file format: {ext}. Supported: csv, tsv, xlsx, xls, json, geojson, gpkg, kml, shp, zip."
+        f"Unsupported file format: {ext}. Supported: csv, tsv, xlsx, xls, json, geojson, zip."
     )
 
 
