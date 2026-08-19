@@ -1,0 +1,1128 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+@theme {
+  --font-display: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-iris-bg: #050816;
+  --color-iris-bg2: #070B1A;
+  --color-iris-bg3: #0A1024;
+  --color-iris-primary: #6366F1;
+  --color-iris-violet: #7C3AED;
+  --color-iris-cyan: #22D3EE;
+  --color-iris-blue: #3B82F6;
+  --color-iris-success: #22C55E;
+  --color-iris-warning: #F59E0B;
+  --color-iris-danger: #EF4444;
+  --color-iris-text: #F8FAFC;
+  --color-iris-muted: #94A3B8;
+}
+
+@source "./**/*.{js,jsx,ts,tsx}";
+
+.iris-lp {
+  --iris-bg: #050816;
+  --iris-bg2: #070B1A;
+  --iris-bg3: #0A1024;
+  --iris-primary: #6366F1;
+  --iris-violet: #7C3AED;
+  --iris-cyan: #22D3EE;
+  --iris-blue: #3B82F6;
+  --iris-success: #22C55E;
+  --iris-warning: #F59E0B;
+  --iris-danger: #EF4444;
+  --iris-text: #F8FAFC;
+  --iris-muted: #94A3B8;
+  --iris-line: rgba(148, 163, 184, 0.16);
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  min-height: 100vh;
+  color: var(--iris-text);
+  background: #050816;
+  font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif;
+}
+
+.iris-lp a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.iris-lp button {
+  font: inherit;
+  color: inherit;
+}
+
+.iris-lp.has-cursor,
+.iris-lp.has-cursor a,
+.iris-lp.has-cursor button {
+  cursor: none;
+}
+
+body.iris-landing-active {
+  background: #050816;
+}
+
+.iris-skip {
+  position: absolute;
+  left: 12px;
+  top: -40px;
+  z-index: 100;
+  padding: 8px 12px;
+  background: #6366F1;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.iris-skip:focus {
+  top: 12px;
+}
+
+.iris-wrap {
+  width: min(1180px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.iris-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  color: #22D3EE;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.iris-kicker i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22D3EE;
+  box-shadow: 0 0 12px #22D3EE;
+}
+
+.iris-display {
+  margin: 0;
+  font-size: clamp(2.4rem, 5.4vw, 5.4rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.iris-copy {
+  max-width: 42rem;
+  color: #94A3B8;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.iris-gradient-text {
+  background: linear-gradient(120deg, #3B82F6 0%, #7C3AED 46%, #22D3EE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.iris-demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  color: #22D3EE;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.iris-section {
+  position: relative;
+  z-index: 2;
+  padding: clamp(4.5rem, 11vh, 8.5rem) 0;
+}
+
+.iris-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    radial-gradient(1000px 420px at 12% 0%, var(--section-glow, transparent), transparent 58%);
+}
+
+.iris-section-blue { --section-glow: rgba(59, 130, 246, 0.12); }
+.iris-section-violet { --section-glow: rgba(124, 58, 237, 0.12); }
+.iris-section-red { --section-glow: rgba(239, 68, 68, 0.1); }
+.iris-section-green { --section-glow: rgba(34, 197, 94, 0.08); }
+.iris-section-cyan { --section-glow: rgba(34, 211, 238, 0.1); }
+
+.iris-hud {
+  position: relative;
+}
+
+.iris-hud::before,
+.iris-hud::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(34, 211, 238, 0.45);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.iris-hud::before {
+  top: 0;
+  left: 0;
+  border-width: 1px 0 0 1px;
+}
+
+.iris-hud::after {
+  right: 0;
+  bottom: 0;
+  border-width: 0 1px 1px 0;
+}
+
+.iris-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  width: 100%;
+  height: 2px;
+  pointer-events: none;
+}
+
+.iris-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, #22D3EE, #3B82F6, #7C3AED);
+}
+
+.iris-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  width: 100%;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  background: rgba(5, 8, 22, 0.28);
+  backdrop-filter: blur(8px);
+  transition: height 0.35s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.iris-nav.is-scrolled {
+  height: 68px;
+  border-bottom-color: rgba(148, 163, 184, 0.14);
+  background: rgba(5, 8, 22, 0.88);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 24px rgba(99, 102, 241, 0.08);
+}
+
+.iris-nav-inner {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.iris-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iris-brand-mark {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+}
+
+.iris-brand strong {
+  display: block;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+}
+
+.iris-brand small {
+  display: block;
+  margin-top: 1px;
+  color: #94A3B8;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.iris-nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.iris-nav-link {
+  position: relative;
+  padding: 8px 12px;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.iris-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4px;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: 50%;
+  background: linear-gradient(90deg, #22D3EE, #6366F1);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.7);
+  transition: transform 0.25s ease;
+}
+
+.iris-nav-link:hover,
+.iris-nav-link.active {
+  color: #F8FAFC;
+}
+
+.iris-nav-link:hover::after,
+.iris-nav-link.active::after {
+  transform: scaleX(1);
+}
+
+.iris-nav-link:focus-visible,
+.iris-btn:focus-visible,
+.iris-icon-btn:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 3px;
+}
+
+.iris-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iris-icon-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: transparent;
+  color: #F8FAFC;
+}
+
+.iris-btn {
+  position: relative;
+  overflow: hidden;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.iris-btn-primary {
+  background: linear-gradient(135deg, #6366F1, #7C3AED);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.28);
+  color: #fff;
+}
+
+.iris-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(99, 102, 241, 0.4);
+}
+
+.iris-btn-secondary {
+  border-color: rgba(148, 163, 184, 0.24);
+  background: transparent;
+}
+
+.iris-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.iris-btn-lg {
+  min-height: 52px;
+  padding: 0 22px;
+  font-size: 14px;
+}
+
+.iris-shine {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+}
+
+.iris-menu {
+  display: none;
+}
+
+.iris-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+
+.iris-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(360px, 100%);
+  height: 100%;
+  padding: 88px 28px 32px;
+  background: rgba(7, 11, 26, 0.96);
+  border-left: 1px solid rgba(148, 163, 184, 0.14);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.iris-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.iris-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
+}
+
+.iris-bg-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+.iris-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.28;
+}
+
+.iris-blob-a {
+  width: 420px;
+  height: 420px;
+  top: -80px;
+  right: 8%;
+  background: #3B82F6;
+  animation: irisDrift 18s ease-in-out infinite alternate;
+}
+
+.iris-blob-b {
+  width: 340px;
+  height: 340px;
+  left: -60px;
+  top: 30%;
+  background: #7C3AED;
+  animation: irisDrift 22s ease-in-out infinite alternate-reverse;
+}
+
+.iris-blob-c {
+  width: 280px;
+  height: 280px;
+  right: 18%;
+  bottom: 8%;
+  background: #22D3EE;
+  animation: irisDrift 26s ease-in-out infinite alternate;
+}
+
+.iris-bg-roads {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+}
+
+.iris-cursor-dot,
+.iris-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 120;
+  pointer-events: none;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+
+.iris-cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: #22D3EE;
+  box-shadow: 0 0 12px #22D3EE;
+}
+
+.iris-cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgba(34, 211, 238, 0.55);
+  transition: width 0.2s, height 0.2s, margin 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.iris-cursor-ring.is-hover {
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-color: #6366F1;
+}
+
+.iris-cursor-ring.is-button {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: #7C3AED;
+}
+
+.iris-cursor-ring.is-cross {
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 0;
+  border-color: #22D3EE;
+}
+
+.iris-hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 110px 0 72px;
+}
+
+.iris-hero [data-hero="eyebrow"],
+.iris-hero [data-hero="word"],
+.iris-hero [data-hero="sub"],
+.iris-hero [data-hero="cta"],
+.iris-hero [data-hero="meta"],
+.iris-hero [data-hero="viz"],
+.iris-hero [data-hero="float"],
+.iris-hero [data-hero="scroll"] {
+  opacity: 0;
+}
+
+.iris-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 32px;
+  align-items: center;
+}
+
+.iris-hero h1 span {
+  display: block;
+}
+
+.iris-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 28px 0 14px;
+}
+
+.iris-hero-meta {
+  color: #94A3B8;
+  font-size: 13px;
+}
+
+.iris-stage {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.iris-stage b {
+  display: block;
+  color: #22D3EE;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.iris-stage p {
+  margin: 8px 0 0;
+  color: #94A3B8;
+  font-size: 14px;
+}
+
+.iris-viz {
+  position: relative;
+  min-height: 560px;
+}
+
+.iris-viz-frame {
+  position: relative;
+  height: 560px;
+  overflow: visible;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(59, 130, 246, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(10, 16, 36, 0.2), rgba(5, 8, 22, 0.4));
+}
+
+.iris-canvas,
+.iris-canvas canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.iris-float {
+  position: absolute;
+  z-index: 3;
+  min-width: 148px;
+  max-width: min(220px, 42%);
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(7, 11, 26, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.iris-float small,
+.iris-mono {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.iris-float small {
+  display: block;
+  color: #94A3B8;
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
+.iris-float strong {
+  display: block;
+  margin-top: 4px;
+  font-size: clamp(18px, 2.6vw, 22px);
+  letter-spacing: 0;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.iris-float em {
+  font-style: normal;
+  color: #94A3B8;
+  font-size: 10px;
+}
+
+.iris-float.tone-danger { box-shadow: 0 0 24px rgba(239, 68, 68, 0.12); }
+.iris-float.tone-warning { box-shadow: 0 0 24px rgba(245, 158, 11, 0.12); }
+.iris-float.tone-cyan { box-shadow: 0 0 24px rgba(34, 211, 238, 0.12); }
+.iris-float.tone-success { box-shadow: 0 0 24px rgba(34, 197, 94, 0.12); }
+
+.iris-cable {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.iris-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #94A3B8;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+.iris-scroll i {
+  width: 1px;
+  height: 42px;
+  overflow: hidden;
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.iris-scroll i::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 16px;
+  background: #22D3EE;
+  animation: irisLine 1.4s ease-in-out infinite;
+}
+
+.iris-pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+}
+
+.iris-pipe {
+  position: relative;
+  padding: 28px 20px;
+  border-top: 1px solid var(--iris-line);
+  border-bottom: 1px solid var(--iris-line);
+}
+
+.iris-pipe + .iris-pipe {
+  border-left: 1px solid var(--iris-line);
+}
+
+.iris-pipe h3 {
+  margin: 0 0 14px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+}
+
+.iris-pipe ul {
+  margin: 0;
+  padding: 0;
+}
+
+.iris-pipe li {
+  color: #94A3B8;
+  font-size: 13px;
+  line-height: 1.8;
+  list-style: none;
+}
+
+.iris-road-draw {
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
+  animation: irisDraw 2.4s ease forwards;
+}
+
+@keyframes irisDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.iris-pipe::after {
+  content: "";
+  position: absolute;
+  top: 34px;
+  right: -1px;
+  width: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #22D3EE);
+}
+
+.iris-pipe:last-child::after {
+  display: none;
+}
+
+.iris-intel {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 18px;
+  min-height: 520px;
+  border: 1px solid var(--iris-line);
+}
+
+.iris-layers {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px;
+  border-right: 1px solid var(--iris-line);
+  background: rgba(10, 16, 36, 0.4);
+}
+
+.iris-layer {
+  text-align: left;
+  padding: 12px 10px;
+  border: 0;
+  background: transparent;
+  color: #94A3B8;
+}
+
+.iris-layer.is-on {
+  color: #F8FAFC;
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.iris-risk {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.iris-gauge {
+  position: relative;
+  width: min(320px, 100%);
+  margin: 0 auto;
+}
+
+.iris-gauge-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.iris-bars {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.iris-bar span {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: #94A3B8;
+  font-size: 12px;
+}
+
+.iris-bar i {
+  display: block;
+  height: 4px;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.iris-bar b {
+  display: block;
+  height: 4px;
+  width: 0;
+  background: linear-gradient(90deg, #3B82F6, #22D3EE);
+}
+
+.iris-cities {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.iris-city {
+  padding: 16px;
+  border: 1px solid var(--iris-line);
+  background: rgba(10, 16, 36, 0.35);
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.iris-city:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+  box-shadow: 0 0 28px rgba(59, 130, 246, 0.12);
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px);
+}
+
+.iris-india {
+  position: relative;
+  min-height: 640px;
+}
+
+.iris-caps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--iris-line);
+}
+
+.iris-cap {
+  padding: 28px 24px;
+  border-right: 1px solid var(--iris-line);
+  border-bottom: 1px solid var(--iris-line);
+  min-height: 240px;
+}
+
+.iris-cap:nth-child(3n) {
+  border-right: 0;
+}
+
+.iris-cap:nth-child(n+4) {
+  border-bottom: 0;
+}
+
+.iris-workflow {
+  overflow: hidden;
+}
+
+.iris-workflow-track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+}
+
+.iris-step {
+  width: min(72vw, 420px);
+  padding: 48px 40px;
+  border-left: 1px solid var(--iris-line);
+}
+
+.iris-step b {
+  color: #22D3EE;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+}
+
+.iris-compare {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.iris-compare ul {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.iris-compare li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--iris-line);
+  color: #94A3B8;
+}
+
+.iris-cta {
+  text-align: center;
+  padding: clamp(6rem, 16vh, 10rem) 0;
+}
+
+.iris-footer {
+  position: relative;
+  z-index: 2;
+  padding: 72px 0 24px;
+  border-top: 1px solid var(--iris-line);
+  background: linear-gradient(180deg, rgba(10, 16, 36, 0.5), #050816);
+}
+
+.iris-footer-grid {
+  display: grid;
+  grid-template-columns: 1.3fr repeat(4, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.iris-footer h3 {
+  margin: 0 0 14px;
+  color: #94A3B8;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.iris-footer a,
+.iris-footer .is-placeholder {
+  display: block;
+  padding: 5px 0;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.iris-footer a:hover {
+  color: #22D3EE;
+}
+
+.iris-footer .is-placeholder {
+  color: #64748b;
+}
+
+.iris-disclaimer {
+  margin-top: 36px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--iris-line);
+  color: #94A3B8;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.iris-status {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #94A3B8;
+}
+
+.iris-status b {
+  color: #22C55E;
+  font-weight: 600;
+}
+
+.iris-status b.is-bad {
+  color: #F59E0B;
+}
+
+.iris-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--iris-line);
+  color: #94A3B8;
+  font-size: 12px;
+}
+
+.iris-search {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  display: grid;
+  place-items: start center;
+  padding-top: 14vh;
+  background: rgba(5, 8, 22, 0.72);
+}
+
+.iris-search-panel {
+  width: min(560px, calc(100% - 32px));
+  border: 1px solid var(--iris-line);
+  background: #070B1A;
+  padding: 16px;
+}
+
+.iris-search-panel input {
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid var(--iris-line);
+  background: transparent;
+  color: #F8FAFC;
+  outline: none;
+}
+
+.iris-search-panel button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.iris-upload-box {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(34, 211, 238, 0.35);
+  background: rgba(10, 16, 36, 0.45);
+  text-align: center;
+}
+
+.iris-quality {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+  align-items: center;
+  margin-top: 32px;
+}
+
+@keyframes irisDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(24px, 18px, 0); }
+}
+
+@keyframes irisLine {
+  from { transform: translateY(-18px); opacity: 0; }
+  to { transform: translateY(42px); opacity: 1; }
+}
+
+@media (max-width: 1024px) {
+  .iris-hero {
+    height: auto;
+    overflow: visible;
+  }
+
+  .iris-workflow-track {
+    display: grid;
+    width: 100%;
+    transform: none !important;
+  }
+
+  .iris-step {
+    width: auto;
+    padding: 28px 8px;
+    border-left: 0;
+    border-top: 1px solid var(--iris-line);
+  }
+}
+
+@media (max-width: 1100px) {
+  .iris-hero-grid,
+  .iris-risk,
+  .iris-compare,
+  .iris-intel,
+  .iris-footer-grid,
+  .iris-quality {
+    grid-template-columns: 1fr;
+  }
+
+  .iris-pipeline,
+  .iris-cities,
+  .iris-caps {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .iris-cap:nth-child(3n) { border-right: 1px solid var(--iris-line); }
+  .iris-cap:nth-child(2n) { border-right: 0; }
+  .iris-nav-links { display: none; }
+  .iris-menu { display: grid; }
+  .iris-viz { min-height: 420px; }
+  .iris-viz-frame { height: 420px; }
+}
+
+@media (max-width: 720px) {
+  .iris-pipeline,
+  .iris-cities,
+  .iris-caps {
+    grid-template-columns: 1fr;
+  }
+
+  .iris-nav-inner {
+    grid-template-columns: auto auto;
+  }
+
+  .iris-nav-right .iris-btn { display: none; }
+  .iris-hero { padding-top: 96px; }
+  .iris-float { display: none; }
+  .iris-pipe + .iris-pipe { border-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iris-blob,
+  .iris-scroll i::after {
+    animation: none !important;
+  }
+
+  .iris-hero [data-hero] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

@@ -19,7 +19,7 @@ const Cities = () => {
       setLoading(true);
       const data = await cityService.getAllCities();
       setCities(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load cities.');
     } finally {
       setLoading(false);

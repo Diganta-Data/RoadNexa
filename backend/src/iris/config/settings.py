@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     secret_key: str = "change-this-to-a-random-secret-key"
 
+    # AI LLM Settings
+    gemini_api_key: str | None = None
+    groq_api_key: str | None = None
+
     # Data dirs
     data_raw_dir: str = "data/raw"
     data_staging_dir: str = "data/staging"
@@ -41,6 +45,10 @@ class Settings(BaseSettings):
     def async_database_url(self) -> str:
         """Async DB URL for SQLAlchemy."""
         if self.database_url:
+            if self.database_url.startswith("postgres://"):
+                return self.database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+            if self.database_url.startswith("postgresql://"):
+                return self.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
             return self.database_url
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"

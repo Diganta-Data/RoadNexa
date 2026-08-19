@@ -1,0 +1,206 @@
+.upload-page {
+  padding: clamp(3rem, 8vh, 5rem) 2rem 4rem;
+}
+
+.upload-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 0;
+  border: 1px solid var(--border-color);
+}
+
+.upload-form,
+.upload-guide {
+  padding: 28px 24px;
+  background: rgba(10, 16, 36, 0.35);
+}
+
+.upload-guide {
+  border-left: 1px solid var(--border-color);
+}
+
+.upload-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.form-group select,
+.form-group input {
+  min-height: 48px;
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: #f8fafc;
+  color: var(--text-on-light);
+  outline: none;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.16);
+}
+
+.dataset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--border-color);
+}
+
+.dataset-option {
+  min-height: 120px;
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  padding: 16px;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(5, 8, 22, 0.28);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.dataset-option:nth-child(2n) {
+  border-right: 0;
+}
+
+.dataset-option:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.dataset-option input {
+  accent-color: var(--accent-secondary);
+}
+
+.dataset-option strong {
+  color: var(--text-primary);
+}
+
+.dataset-option span {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.dataset-option.active,
+.dataset-option:hover {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--text-primary);
+}
+
+.dropzone {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  gap: 0.45rem;
+  padding: 1.5rem;
+  border: 1px dashed rgba(34, 211, 238, 0.35);
+  background: rgba(10, 16, 36, 0.45);
+  color: var(--text-secondary);
+  text-align: center;
+  cursor: pointer;
+}
+
+.dropzone svg {
+  color: var(--accent-secondary);
+}
+
+.dropzone strong {
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.dropzone span {
+  max-width: 520px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.dropzone input {
+  display: none;
+}
+
+.success-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-guide {
+  position: sticky;
+  top: calc(var(--navbar-height) + 1rem);
+  align-self: start;
+}
+
+.upload-guide h2 {
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.upload-guide p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.guide-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.guide-step span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  color: var(--accent-secondary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .upload-layout,
+  .dataset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-guide {
+    position: static;
+    border-left: 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .dataset-option,
+  .dataset-option:nth-child(2n),
+  .dataset-option:nth-last-child(-n + 2) {
+    border-right: 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .dataset-option:last-child {
+    border-bottom: 0;
+  }
+}

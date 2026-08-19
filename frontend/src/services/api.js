@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+// In dev, Vite proxies /analytics, /cities, /geo, /roads, /uploads, /health → localhost:8000
+// This avoids CORS entirely. In production, set VITE_API_BASE_URL to the real backend.
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
   headers: { 'Content-Type': 'application/json' },
 });
 

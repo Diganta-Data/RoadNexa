@@ -3,9 +3,9 @@ import './Footer.css';
 
 const Footer = () => {
   return (
-    <footer className="footer glass-panel">
+    <footer className="footer">
       <div className="container">
-        <p>&copy; {new Date().getFullYear()} IRIS — Indian Road Intelligence & Safety Platform. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} RoadNexa - Road Intelligence & Safety Platform.</p>
       </div>
     </footer>
   );

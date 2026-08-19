@@ -1,6 +1,7 @@
 """Async SQLAlchemy engine and session setup."""
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from iris.config.settings import get_settings
 
@@ -9,8 +10,7 @@ settings = get_settings()
 engine = create_async_engine(
     settings.async_database_url,
     echo=settings.log_level == "DEBUG",
-    pool_size=10,
-    max_overflow=20,
+    poolclass=NullPool,
     pool_pre_ping=True,
 )
 
