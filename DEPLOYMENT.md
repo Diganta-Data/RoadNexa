@@ -1,97 +1,118 @@
-# RoadNexa Deployment Guide
+# 🚀 RoadNexa Deployment Guide
 
-RoadNexa is a two-service app:
-
-- `frontend/` deploys to Vercel as a Vite React app.
-- `backend/` deploys to Render as a FastAPI web service.
-- PostgreSQL with PostGIS is required for production data.
-
-## 1. Push To GitHub
-
-```bash
-git add .
-git commit -m "Prepare RoadNexa for Vercel and Render deployment"
-git push origin main
+## Architecture
+```
+Frontend (Vercel) ──── API calls ────► Backend (Render / Docker)
+                                            │
+                                      Supabase PostgreSQL DB
 ```
 
-If your branch is not `main`, push your active branch and choose that branch in Vercel/Render.
+---
 
-## 2. Deploy Frontend On Vercel
+## Step 1: Deploy Backend on Render (Docker)
 
-1. Go to Vercel and choose **Add New Project**.
-2. Import `Diganta-Data/RoadNexa`.
-3. Set **Root Directory** to `frontend`.
-4. Vercel should detect Vite automatically. Confirm:
-   - Framework Preset: `Vite`
-   - Install Command: `npm ci`
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-5. Add this Environment Variable:
-   - `VITE_API_BASE_URL` = your Render backend URL
-   - Example: `https://roadnexa-backend.onrender.com`
-6. Click **Deploy**.
+### Why Docker?
+Render's native Python runtime doesn't include GDAL/GEOS system libraries needed by GeoPandas. Using Docker solves this.
 
-For the first deployment, you can temporarily set:
+### Setup Instructions
 
-```text
-VITE_API_BASE_URL=https://roadnexa-backend.onrender.com
+1. **Go to [Render Dashboard](https://dashboard.render.com)**
+
+2. **Create New → Web Service**
+
+3. **Connect your GitHub repo** (`RoadNexa`)
+
+4. **Configure the service:**
+
+   | Setting | Value |
+   |---------|-------|
+   | **Name** | `roadnexa-backend` |
+   | **Root Directory** | `backend` |
+   | **Runtime** | `Docker` |
+   | **Dockerfile Path** | `./Dockerfile` |
+   | **Plan** | Free |
+
+5. **Set Environment Variables** (in Render dashboard → Environment tab):
+
+   | Key | Value |
+   |-----|-------|
+   | `DATABASE_URL` | `postgresql+asyncpg://postgres:e%21c2%26yt%3D%23Ys24LB@db.wtykkdujrpczkpmejldl.supabase.co:5432/postgres` |
+   | `GEMINI_API_KEY` | Your Gemini API key |
+   | `CORS_ORIGINS` | `https://your-vercel-app.vercel.app,http://localhost:5173` |
+   | `BACKEND_HOST` | `0.0.0.0` |
+   | `BACKEND_RELOAD` | `false` |
+   | `LOG_LEVEL` | `INFO` |
+   | `UPLOAD_DIR` | `/tmp/roadnexa/uploads` |
+
+6. **Click "Create Web Service"** — Render will build the Docker image and deploy.
+
+7. **Copy your Render URL** (e.g., `https://roadnexa-backend.onrender.com`)
+
+---
+
+## Step 2: Deploy Frontend on Vercel
+
+### Setup Instructions
+
+1. **Go to [Vercel Dashboard](https://vercel.com/dashboard)**
+
+2. **Import your GitHub repo** (`RoadNexa`)
+
+3. **Configure:**
+
+   | Setting | Value |
+   |---------|-------|
+   | **Framework Preset** | Vite |
+   | **Root Directory** | `frontend` |
+   | **Build Command** | `npm run build` |
+   | **Output Directory** | `dist` |
+
+4. **Set Environment Variable:**
+
+   | Key | Value |
+   |-----|-------|
+   | `VITE_API_BASE_URL` | `https://roadnexa-backend.onrender.com` ← Your Render backend URL |
+
+5. **Deploy**
+
+---
+
+## Step 3: Update CORS on Render
+
+After Vercel gives you a URL (e.g., `https://roadnexa.vercel.app`), go back to **Render → Environment** and update:
+
+```
+CORS_ORIGINS=https://roadnexa.vercel.app,https://your-custom-domain.com
 ```
 
-Then update it after Render gives you the exact backend URL.
+---
 
-## 3. Deploy Backend On Render
+## Common Issues & Fixes
 
-1. Go to Render and choose **New Web Service**.
-2. Connect the same GitHub repository.
-3. Use these settings:
-   - Root Directory: `backend`
-   - Runtime: `Python 3`
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `uvicorn iris.main:app --app-dir src --host 0.0.0.0 --port $PORT`
-   - Health Check Path: `/health`
-4. Add Environment Variables:
-   - `DATABASE_URL`
-   - `CORS_ORIGINS`
-   - `SECRET_KEY`
-   - `BACKEND_RELOAD=false`
-   - `UPLOAD_DIR=/tmp/roadnexa/uploads`
-5. Deploy the service.
+### Build fails with "cargo install" error
+✅ **Fixed**: We now use Docker with `python:3.12-slim` + GDAL system packages.
 
-Set `CORS_ORIGINS` to your deployed frontend domains:
+### 500 errors / DB connection fails
+✅ Check that `DATABASE_URL` starts with `postgresql+asyncpg://` (not `postgres://`).
 
-```text
-https://your-roadnexa-app.vercel.app,http://localhost:5173,http://127.0.0.1:5173
+### CORS errors in browser
+✅ Make sure `CORS_ORIGINS` on Render includes your exact Vercel URL (with `https://`).
+
+### Render free tier cold starts
+⚠️ Free tier spins down after 15min of inactivity. First request after idle takes ~30s.
+
+---
+
+## Vercel Rewrites (Optional)
+
+If you want to avoid CORS entirely, add this to `frontend/vercel.json`:
+
+```json
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://roadnexa-backend.onrender.com/:path*" }
+  ]
+}
 ```
 
-The backend also allows Vercel preview URLs with `*.vercel.app`.
-
-## 4. Database Setup
-
-Use PostgreSQL with PostGIS enabled. Options:
-
-- Render PostgreSQL plus PostGIS if available on your plan.
-- Supabase PostgreSQL with PostGIS extension enabled.
-- Neon/Postgres with PostGIS support.
-
-After setting `DATABASE_URL`, initialize tables:
-
-```bash
-cd backend
-python init_db.py
-```
-
-For hosted deployment, run this once from your local machine using the production `DATABASE_URL`, or run it from a Render shell.
-
-## 5. Production URLs To Update
-
-After both services deploy:
-
-1. In Vercel, set `VITE_API_BASE_URL` to the Render backend URL.
-2. In Render, set `CORS_ORIGINS` to include the Vercel frontend URL.
-3. Redeploy both services.
-
-## Notes
-
-- Frontend routes are handled by `frontend/vercel.json`, so direct links like `/map` and `/ml-predictions` work after refresh.
-- Uploaded files on Render free instances should be treated as temporary unless persistent storage is configured. The database records remain, but files in `/tmp` may be cleared.
-- Optional API keys: `GEMINI_API_KEY` and `GROQ_API_KEY` only matter if you enable AI analysis features.
+Then change `VITE_API_BASE_URL` to `/api` and update all API paths accordingly.
