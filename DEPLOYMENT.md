@@ -2,16 +2,17 @@
 
 ## Architecture
 ```
-Frontend (Vercel) ──── API calls ────► Backend (Render / Python)
+Frontend (Vercel) ──── API calls ────► Backend (Render / Docker)
                                             │
                                       Supabase PostgreSQL DB
 ```
 
 ---
 
-## Step 1: Deploy Backend on Render (Standard Python Runtime)
+## Step 1: Deploy Backend on Render (Docker)
 
-We have removed the heavy GDAL/GeoPandas binary dependencies. The backend is now a standard, lightweight Python application that installs and runs directly on Render without Docker.
+### Why Docker?
+Render's native Python runtime doesn't include GDAL/GEOS system libraries needed by GeoPandas. Using Docker solves this.
 
 ### Setup Instructions
 
@@ -27,9 +28,8 @@ We have removed the heavy GDAL/GeoPandas binary dependencies. The backend is now
    |---------|-------|
    | **Name** | `roadnexa-backend` |
    | **Root Directory** | `backend` |
-   | **Runtime** | `Python 3` |
-   | **Build Command** | `pip install -r requirements.txt` |
-   | **Start Command** | `uvicorn iris.main:app --app-dir src --host 0.0.0.0 --port $PORT` |
+   | **Runtime** | `Docker` |
+   | **Dockerfile Path** | `./Dockerfile` |
    | **Plan** | Free |
 
 5. **Set Environment Variables** (in Render dashboard → Environment tab):
@@ -43,9 +43,8 @@ We have removed the heavy GDAL/GeoPandas binary dependencies. The backend is now
    | `BACKEND_RELOAD` | `false` |
    | `LOG_LEVEL` | `INFO` |
    | `UPLOAD_DIR` | `/tmp/roadnexa/uploads` |
-   | `PYTHON_VERSION` | `3.12.4` |
 
-6. **Click "Create Web Service"** — Render will build and deploy.
+6. **Click "Create Web Service"** — Render will build the Docker image and deploy.
 
 7. **Copy your Render URL** (e.g., `https://roadnexa-backend.onrender.com`)
 
@@ -85,3 +84,35 @@ After Vercel gives you a URL (e.g., `https://roadnexa.vercel.app`), go back to *
 ```
 CORS_ORIGINS=https://roadnexa.vercel.app,https://your-custom-domain.com
 ```
+
+---
+
+## Common Issues & Fixes
+
+### Build fails with "cargo install" error
+✅ **Fixed**: We now use Docker with `python:3.12-slim` + GDAL system packages.
+
+### 500 errors / DB connection fails
+✅ Check that `DATABASE_URL` starts with `postgresql+asyncpg://` (not `postgres://`).
+
+### CORS errors in browser
+✅ Make sure `CORS_ORIGINS` on Render includes your exact Vercel URL (with `https://`).
+
+### Render free tier cold starts
+⚠️ Free tier spins down after 15min of inactivity. First request after idle takes ~30s.
+
+---
+
+## Vercel Rewrites (Optional)
+
+If you want to avoid CORS entirely, add this to `frontend/vercel.json`:
+
+```json
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://roadnexa-backend.onrender.com/:path*" }
+  ]
+}
+```
+
+Then change `VITE_API_BASE_URL` to `/api` and update all API paths accordingly.

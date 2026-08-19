@@ -1,12 +1,14 @@
 """Data parser and ETL for uploaded datasets."""
 
 import os
+import json
+import zipfile
+import io
 from datetime import date
 from uuid import UUID
 
 import pandas as pd
 from geoalchemy2.elements import WKTElement
-from shapely.geometry import LineString, Point, shape
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from iris.models.core import Road
@@ -115,7 +117,7 @@ def _time(row, columns: dict[str, str], name: str):
 
 
 def _point_wkt(lat: float, lon: float) -> WKTElement:
-    return WKTElement(Point(lon, lat).wkt, srid=4326)
+    return WKTElement(f"POINT({lon} {lat})", srid=4326)
 
 
 def _point_from_row(row, columns: dict[str, str]) -> tuple[float, float] | None:
@@ -127,16 +129,34 @@ def _point_from_row(row, columns: dict[str, str]) -> tuple[float, float] | None:
     geometry = row.get("geometry")
     if _is_missing(geometry):
         return None
-    if hasattr(geometry, "geom_type") and geometry.geom_type == "Point":
-        return float(geometry.y), float(geometry.x)
+    if isinstance(geometry, dict):
+        if geometry.get("type") == "Point" and isinstance(geometry.get("coordinates"), list):
+            coords = geometry["coordinates"]
+            if len(coords) >= 2:
+                return float(coords[1]), float(coords[0])
+    if isinstance(geometry, str):
+        text_val = geometry.strip().upper()
+        if text_val.startswith("POINT"):
+            try:
+                coords_part = text_val.replace("POINT", "").replace("(", "").replace(")", "").strip()
+                parts = coords_part.split()
+                if len(parts) >= 2:
+                    return float(parts[1]), float(parts[0])
+            except Exception:
+                pass
     return None
 
 
 def _line_wkt(row, columns: dict[str, str]) -> WKTElement | None:
     geometry = row.get("geometry")
     if not _is_missing(geometry):
-        if hasattr(geometry, "wkt"):
-            return WKTElement(geometry.wkt, srid=4326)
+        if isinstance(geometry, dict):
+            geom_type = geometry.get("type")
+            coords = geometry.get("coordinates")
+            if geom_type == "LineString" and isinstance(coords, list):
+                coords_str = ", ".join([f"{pt[0]} {pt[1]}" for pt in coords])
+                return WKTElement(f"LINESTRING({coords_str})", srid=4326)
+        
         text_value = str(geometry).strip()
         if text_value.upper().startswith("LINESTRING"):
             return WKTElement(text_value, srid=4326)
@@ -145,54 +165,7 @@ def _line_wkt(row, columns: dict[str, str]) -> WKTElement | None:
     lon = _float(row, columns, "longitude")
     if lat is None or lon is None:
         return None
-    return WKTElement(LineString([(lon - 0.002, lat - 0.002), (lon + 0.002, lat + 0.002)]).wkt, srid=4326)
-
-
-def _read_geojson(file_path: str) -> pd.DataFrame:
-    import json
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    rows = []
-    if isinstance(data, dict):
-        if data.get("type") == "FeatureCollection":
-            features = data.get("features", [])
-        elif data.get("type") == "Feature":
-            features = [data]
-        else:
-            features = []
-    else:
-        features = []
-
-    for feat in features:
-        row = {}
-        row.update(feat.get("properties", {}))
-        geom = feat.get("geometry")
-        if geom:
-            try:
-                row["geometry"] = shape(geom)
-            except Exception:
-                pass
-        rows.append(row)
-    
-    if not rows:
-        return pd.DataFrame()
-    return pd.DataFrame(rows)
-
-
-def _read_zip(file_path: str) -> pd.DataFrame:
-    import zipfile
-    import tempfile
-    with zipfile.ZipFile(file_path, 'r') as zip_ref:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            zip_ref.extractall(temp_dir)
-            for root, dirs, files in os.walk(temp_dir):
-                for file in files:
-                    full_path = os.path.join(root, file)
-                    ext = os.path.splitext(file)[1].lower()
-                    if ext in {".csv", ".tsv", ".xlsx", ".xls", ".json", ".geojson"}:
-                        return _read_upload_file(full_path)
-    raise ValueError("No supported files (CSV, GeoJSON, Excel) found in the zip archive.")
+    return WKTElement(f"LINESTRING({lon - 0.002} {lat - 0.002}, {lon + 0.002} {lat + 0.002})", srid=4326)
 
 
 def _read_upload_file(file_path: str) -> pd.DataFrame:
@@ -204,15 +177,41 @@ def _read_upload_file(file_path: str) -> pd.DataFrame:
     if ext in {".xlsx", ".xls"}:
         return pd.read_excel(file_path)
     if ext in {".json", ".geojson"}:
-        try:
-            return _read_geojson(file_path)
-        except Exception:
-            return pd.read_json(file_path)
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict) and data.get("type") == "FeatureCollection":
+            features = data.get("features", [])
+            rows = []
+            for feat in features:
+                properties = feat.get("properties", {})
+                properties["geometry"] = feat.get("geometry")
+                rows.append(properties)
+            return pd.DataFrame(rows)
+        return pd.read_json(file_path)
     if ext == ".zip":
-        return _read_zip(file_path)
+        with zipfile.ZipFile(file_path, "r") as z:
+            names = z.namelist()
+            valid_names = [n for n in names if not n.startswith("__MACOSX") and not n.endswith("/")]
+            for name in valid_names:
+                sub_ext = os.path.splitext(name)[1].lower()
+                if sub_ext in {".csv", ".tsv", ".xlsx", ".xls", ".json", ".geojson"}:
+                    with z.open(name) as f:
+                        content = f.read()
+                        temp_file_path = f"/tmp/{os.path.basename(name)}"
+                        os.makedirs("/tmp", exist_ok=True)
+                        with open(temp_file_path, "wb") as temp_f:
+                            temp_f.write(content)
+                        res = _read_upload_file(temp_file_path)
+                        try:
+                            os.remove(temp_file_path)
+                        except Exception:
+                            pass
+                        return res
+            raise ValueError("No supported files (CSV, TSV, Excel, JSON, GeoJSON) found inside the zip archive.")
     raise ValueError(
-        f"Unsupported file format: {ext}. Supported: csv, tsv, xlsx, xls, json, geojson, zip."
+        f"Unsupported file format: {ext}. Supported: CSV, TSV, Excel, JSON, GeoJSON, ZIP."
     )
+
 
 
 async def process_dataset(db: AsyncSession, upload_id: UUID, city_id: UUID, dataset_type: str, file_path: str):
