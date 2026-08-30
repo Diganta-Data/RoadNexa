@@ -16,13 +16,14 @@ geoalchemy2>=0.14.0,<0.18.0
 pydantic>=2.5.0,<2.11.0
 pydantic-settings>=2.1.0,<2.8.0
 
-# --- Data Processing (Flexible to fetch pre-compiled binary wheels) ---
-pandas>=2.0.0,<2.2.0
-numpy>=1.24.0,<2.0.0
+# --- Data Processing ---
+# Pin wheel-backed versions so Render does not try to compile pandas from source.
+pandas==2.2.3
+numpy==1.26.4
 openpyxl>=3.1.0,<3.2.0
 
 # --- ML ---
-scikit-learn>=1.3.0,<1.6.0
+scikit-learn==1.5.2
 
 # --- HTTP Client ---
 httpx>=0.25.0,<0.29.0
