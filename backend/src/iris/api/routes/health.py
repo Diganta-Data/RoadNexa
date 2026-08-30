@@ -32,6 +32,11 @@ async def health_check_db(db: AsyncSession = Depends(get_db_session)):
     db_status = "disconnected"
     db_details = None
 
+    from iris.config.settings import get_settings
+    settings = get_settings()
+    db_url = settings.async_database_url or ""
+    db_host = db_url.split("@")[-1].split("/")[0] if "@" in db_url else "unknown"
+
     try:
         result = await db.execute(text("SELECT 1"))
         result.scalar()
@@ -40,14 +45,14 @@ async def health_check_db(db: AsyncSession = Depends(get_db_session)):
         try:
             postgis_result = await db.execute(text("SELECT PostGIS_Version()"))
             postgis_version = postgis_result.scalar()
-            db_details = {"postgis_version": postgis_version}
+            db_details = {"postgis_version": postgis_version, "host": db_host}
         except Exception:
-            db_details = {"postgis_version": "not installed"}
+            db_details = {"postgis_version": "not installed", "host": db_host}
 
     except Exception as exc:
         logger.error("DB health check failed", extra={"error": str(exc)})
         db_status = "error"
-        db_details = {"error": str(exc)}
+        db_details = {"error": str(exc), "host": db_host}
 
     return {
         "status": "healthy" if db_status == "connected" else "degraded",
