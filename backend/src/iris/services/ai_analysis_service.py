@@ -53,21 +53,23 @@ async def generate_ai_road_analysis(road_data: Dict[str, Any], question: Optiona
     # 1. Try Google Gemini API if key is present
     if settings.gemini_api_key:
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={settings.gemini_api_key}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={settings.gemini_api_key}"
             payload = {"contents": [{"parts": [{"text": prompt}]}]}
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.post(url, json=payload)
                 if resp.status_code == 200:
                     text_resp = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
                     return {
-                        "provider": "Google Gemini 1.5 Flash AI",
+                        "provider": "Google Gemini 3.6 Flash AI",
                         "status": "success",
                         "analysis_markdown": text_resp,
                         "risk_score": risk_score,
                         "risk_level": risk_level
                     }
+                else:
+                    logger.error(f"Gemini API returned error code {resp.status_code}: {resp.text}")
         except Exception as e:
-            print(f"Gemini API call failed: {e}")
+            logger.error(f"Gemini API call failed with exception: {e}", exc_info=True)
 
     # 2. Try Groq API if key is present
     if settings.groq_api_key:
