@@ -1,118 +1,79 @@
-# 🚀 RoadNexa Deployment Guide
+# RoadNexa Deployment Guide
 
-## Architecture
-```
-Frontend (Vercel) ──── API calls ────► Backend (Render / Docker)
-                                            │
-                                      Supabase PostgreSQL DB
-```
+RoadNexa deploys as two services:
 
----
+- Frontend: Vercel, root directory `frontend`
+- Backend: Render Web Service, root directory `backend`, runtime `Docker`
+- Database: Supabase PostgreSQL with PostGIS enabled
 
-## Step 1: Deploy Backend on Render (Docker)
+## Frontend
 
-### Why Docker?
-Render's native Python runtime doesn't include GDAL/GEOS system libraries needed by GeoPandas. Using Docker solves this.
+Vercel URL:
 
-### Setup Instructions
-
-1. **Go to [Render Dashboard](https://dashboard.render.com)**
-
-2. **Create New → Web Service**
-
-3. **Connect your GitHub repo** (`RoadNexa`)
-
-4. **Configure the service:**
-
-   | Setting | Value |
-   |---------|-------|
-   | **Name** | `roadnexa-backend` |
-   | **Root Directory** | `backend` |
-   | **Runtime** | `Docker` |
-   | **Dockerfile Path** | `./Dockerfile` |
-   | **Plan** | Free |
-
-5. **Set Environment Variables** (in Render dashboard → Environment tab):
-
-   | Key | Value |
-   |-----|-------|
-   | `DATABASE_URL` | `postgresql+asyncpg://postgres:e%21c2%26yt%3D%23Ys24LB@db.wtykkdujrpczkpmejldl.supabase.co:5432/postgres` |
-   | `GEMINI_API_KEY` | Your Gemini API key |
-   | `CORS_ORIGINS` | `https://your-vercel-app.vercel.app,http://localhost:5173` |
-   | `BACKEND_HOST` | `0.0.0.0` |
-   | `BACKEND_RELOAD` | `false` |
-   | `LOG_LEVEL` | `INFO` |
-   | `UPLOAD_DIR` | `/tmp/roadnexa/uploads` |
-
-6. **Click "Create Web Service"** — Render will build the Docker image and deploy.
-
-7. **Copy your Render URL** (e.g., `https://roadnexa-backend.onrender.com`)
-
----
-
-## Step 2: Deploy Frontend on Vercel
-
-### Setup Instructions
-
-1. **Go to [Vercel Dashboard](https://vercel.com/dashboard)**
-
-2. **Import your GitHub repo** (`RoadNexa`)
-
-3. **Configure:**
-
-   | Setting | Value |
-   |---------|-------|
-   | **Framework Preset** | Vite |
-   | **Root Directory** | `frontend` |
-   | **Build Command** | `npm run build` |
-   | **Output Directory** | `dist` |
-
-4. **Set Environment Variable:**
-
-   | Key | Value |
-   |-----|-------|
-   | `VITE_API_BASE_URL` | `https://roadnexa-backend.onrender.com` ← Your Render backend URL |
-
-5. **Deploy**
-
----
-
-## Step 3: Update CORS on Render
-
-After Vercel gives you a URL (e.g., `https://roadnexa.vercel.app`), go back to **Render → Environment** and update:
-
-```
-CORS_ORIGINS=https://roadnexa.vercel.app,https://your-custom-domain.com
+```text
+https://road-nexa.vercel.app
 ```
 
----
+Set this Vercel environment variable after Render backend is live:
 
-## Common Issues & Fixes
-
-### Build fails with "cargo install" error
-✅ **Fixed**: We now use Docker with `python:3.12-slim` + GDAL system packages.
-
-### 500 errors / DB connection fails
-✅ Check that `DATABASE_URL` starts with `postgresql+asyncpg://` (not `postgres://`).
-
-### CORS errors in browser
-✅ Make sure `CORS_ORIGINS` on Render includes your exact Vercel URL (with `https://`).
-
-### Render free tier cold starts
-⚠️ Free tier spins down after 15min of inactivity. First request after idle takes ~30s.
-
----
-
-## Vercel Rewrites (Optional)
-
-If you want to avoid CORS entirely, add this to `frontend/vercel.json`:
-
-```json
-{
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://roadnexa-backend.onrender.com/:path*" }
-  ]
-}
+```env
+VITE_API_BASE_URL=https://YOUR_RENDER_BACKEND_URL.onrender.com
 ```
 
-Then change `VITE_API_BASE_URL` to `/api` and update all API paths accordingly.
+## Backend On Render
+
+Use Docker runtime because the backend supports GIS files and needs GDAL/GEOS/PROJ libraries for GeoPandas.
+
+Render service settings:
+
+```text
+Name: roadnexa-backend
+Root Directory: backend
+Runtime: Docker
+Dockerfile Path: ./Dockerfile
+Health Check Path: /health
+```
+
+If your existing Render service is set to Python runtime, create a new Web Service with Runtime `Docker`, or change the runtime if Render allows it for your service.
+
+## Render Environment Variables
+
+```env
+DATABASE_URL=<your Supabase asyncpg database URL>
+BACKEND_HOST=0.0.0.0
+BACKEND_PORT=8000
+BACKEND_RELOAD=false
+LOG_LEVEL=INFO
+SECRET_KEY=<your long production secret>
+UPLOAD_DIR=/tmp/roadnexa/uploads
+CORS_ORIGINS=https://road-nexa.vercel.app,http://localhost:5173,http://127.0.0.1:5173
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+GROQ_API_KEY=
+```
+
+## Database Init
+
+Run once after the backend has the production `DATABASE_URL`:
+
+```bash
+cd backend
+python init_db.py
+```
+
+You can run this from local terminal with the same Supabase URL, or from Render Shell.
+
+## Verify
+
+Backend health:
+
+```text
+https://YOUR_RENDER_BACKEND_URL.onrender.com/health
+```
+
+API docs:
+
+```text
+https://YOUR_RENDER_BACKEND_URL.onrender.com/docs
+```
+
+Then update Vercel `VITE_API_BASE_URL` and redeploy frontend.

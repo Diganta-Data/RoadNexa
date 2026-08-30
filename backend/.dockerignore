@@ -1,0 +1,15 @@
+.env
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+htmlcov
+.coverage
+data/uploads/*
+data/raw/*
+data/staging/*
+data/processed/*
+data/rejected/*
+*.log
