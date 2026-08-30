@@ -11,14 +11,14 @@ const INDIA_ZOOM = 5;
 // Tile Providers
 const TILE_PROVIDERS = {
   cartoDark: {
-    name: 'Carto Dark (Default)',
+    name: 'Carto Dark',
     url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
     attribution: '&copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19
   },
   osmStandard: {
-    name: 'OpenStreetMap India',
+    name: 'OpenStreetMap India (Default)',
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution: '&copy; OpenStreetMap contributors',
     subdomains: 'abc',
@@ -82,7 +82,7 @@ const IRISMap = ({
   const initialCenterRef = useRef(center);
   const initialZoomRef = useRef(zoom);
 
-  const [activeTile, setActiveTile] = useState('cartoDark');
+  const [activeTile, setActiveTile] = useState('osmStandard');
   const [govtApiKey, setGovtApiKey] = useState('');
   const [customTileUrl, setCustomTileUrl] = useState('');
   const [showTileSelector, setShowTileSelector] = useState(false);
@@ -99,7 +99,7 @@ const IRISMap = ({
     });
 
     // Default tile layer
-    const initialProvider = TILE_PROVIDERS.cartoDark;
+    const initialProvider = TILE_PROVIDERS.osmStandard;
     const tileLayer = L.tileLayer(initialProvider.url, {
       maxZoom: initialProvider.maxZoom,
       subdomains: initialProvider.subdomains || 'abc',
